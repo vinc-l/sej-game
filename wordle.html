@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <section id="Wordle">
+        <div class="container">
+            <div class="top">
+                <div class="timer-wrapper">
+                    <div class="timer-container">
+                        <div class="timer-bar" id="timerBar"></div>
+                    </div>
+                    <div class="timer-info">
+                        <i class="fa-solid fa-hourglass-start" id="hourglass"></i>
+                        <span id="timerText">0s</span>
+                    </div>
+                </div>
+
+                <div class="header-row">
+                    <h3 class="question-type"></h3> 
+                    <div class="question-difficulty"></div> 
+                </div>
+
+                <h2 class="question"></h2>
+                <div id="imageContainer" class="question-image-container"></div>
+
+                <div class="wordle-container" id="choicesContainer">
+                    <div id="wordleGrid" class="wordle-grid"></div>
+                </div>
+            </div>
+
+            <div class="bottom-container">
+                <div class="button submit" id="submitBtn">Periksa</div>
+            </div>
+
+            <div class="feedback-bar" id="feedbackBar">
+                <div class="feedback-content">
+                    <div class="feedback-text-group">
+                        <h2 id="feedbackStatus"></h2>
+                        <h2 id="feedbackPoints">+</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
