@@ -115,7 +115,7 @@ export const quizData = [
     {
         type: "Isian",
         difficulty: "HARD",
-        question: "Pada kesultanan siapakah sistem pemerintahan kerajaan dan angkatan perang laut serta darat sudah terstruktur rapi, kesultanan makmur, dan letak strategis? _____ _-____",
+        question: "Pada kesultanan siapakah sistem pemerintahan kerajaan dan angkatan perang laut serta darat sudah terstruktur rapi, kesultanan makmur, dan letak strategis? _____ __ - ____",
         answer: ["Malik", "al", "Saleh"]
     },
     {
