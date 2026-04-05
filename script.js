@@ -83,6 +83,9 @@ function renderQuestion(data) {
     const imageContainer = document.getElementById('imageContainer');
     imageContainer.innerHTML = '';
 
+    const existingKeyboard = document.getElementById('keyboard');
+    if (existingKeyboard) existingKeyboard.style.display = 'none';
+
     if (data.image) {
         const img = document.createElement('img');
         img.src = data.image;
@@ -157,21 +160,29 @@ function renderQuestion(data) {
     else if (data.type === "Wordle") {
         const word = data.answer[0].toUpperCase();
         const wordLength = word.length;
+        
+        renderKeyboard();
+
         const grid = document.createElement('div');
         grid.className = 'wordle-grid';
-        grid.style.gridTemplateColumns = `repeat(${wordLength}, 50px)`;
+        
+        const tileSize = wordLength > 5 ? '40px' : '50px';
+        grid.style.gridTemplateColumns = `repeat(${wordLength}, ${tileSize})`;
         grid.id = "wordleGrid";
 
         for (let i = 0; i < 6 * wordLength; i++) {
             const tile = document.createElement('div');
             tile.className = 'tile';
+            tile.style.width = tileSize;
+            tile.style.height = tileSize;
             tile.id = `tile-${i}`;
             grid.appendChild(tile);
         }
+        
         choicesContainer.appendChild(grid);
 
         window.addEventListener('keydown', handleKeyDown);
-    } 
+    }
 
     else if (data.type === "TF") {
         const tfContainer = document.createElement('div');
@@ -389,25 +400,91 @@ submitBtn.addEventListener('click', () => {
 initQuiz();
 
 /* WORDLE LOGIC */
-function handleKeyDown(e) {
+function handleInput(key) {
     if (!currentQuestion || currentQuestion.type !== "Wordle") return;
     
     const word = currentQuestion.answer[0].toUpperCase();
     const len = word.length;
 
-    if (e.key === "Enter") {
-        if (currentGuess.length === len) checkWordleRow();
-    } else if (e.key === "Backspace") {
+    if (window.navigator.vibrate) {
+        window.navigator.vibrate(10);
+    }
+
+    if (key === "ENTER") {
+        if (currentGuess.length === len) {
+            checkWordleRow();
+        } else {
+            // Shake the current row if incomplete
+            const grid = document.getElementById('wordleGrid');
+            grid.classList.add('shake');
+            setTimeout(() => grid.classList.remove('shake'), 500);
+        }
+    } else if (key === "DELETE" || key === "BACKSPACE") {
         if (currentGuess.length > 0) {
             currentGuess = currentGuess.slice(0, -1);
             wordleColIndex--;
             updateGrid();
         }
-    } else if (currentGuess.length < len && /^[a-zA-Z]$/.test(e.key)) {
-        currentGuess += e.key.toUpperCase();
+    } else if (currentGuess.length < len && /^[A-Z]$/.test(key)) {
+        currentGuess += key;
         updateGrid();
         wordleColIndex++;
     }
+}
+
+function handleKeyDown(e) {
+    const key = e.key.toUpperCase();
+    handleInput(key);
+}
+
+function renderKeyboard() {
+    let keyboard = document.getElementById('keyboard');
+    if (!keyboard) {
+        keyboard = document.createElement('div');
+        keyboard.id = 'keyboard';
+        keyboard.className = 'keyboard';
+        choicesContainer.after(keyboard);
+    }
+
+    keyboard.innerHTML = '';
+    keyboard.style.display = 'flex';
+
+    const allKeys = document.querySelectorAll('.key');
+    allKeys.forEach(k => {
+        k.classList.remove('correct', 'present', 'absent');
+    });
+
+    const rows = [
+        ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+        ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+        ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'DELETE']
+    ];
+
+    rows.forEach(row => {
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'keyboard-row';
+        row.forEach(key => {
+            const btn = document.createElement('button');
+            btn.className = 'key';
+            
+            if (key === 'ENTER') {
+                btn.classList.add('wide');
+                btn.innerHTML = `<i class="fa-solid fa-check"></i>`;
+            } else if (key === 'DELETE') {
+                btn.classList.add('wide');
+                btn.innerHTML = `<i class="fa-solid fa-backspace"></i>`;
+            } else {
+                btn.innerText = key;
+            }
+            
+            btn.onpointerdown = (e) => {
+                e.preventDefault(); 
+                handleInput(key);
+            };
+            rowDiv.appendChild(btn);
+        });
+        keyboard.appendChild(rowDiv);
+    });
 }
 
 function updateGrid() {
@@ -435,8 +512,9 @@ function checkWordleRow() {
 
     for (let i = 0; i < wordLength; i++) {
         const tile = document.getElementById(`tile-${i + (wordleRowIndex * wordLength)}`);
+        const letter = guess[i];
         
-        if (guess[i] === target[i]) {
+        if (letter === target[i]) {
             correctCount++;
         }
 
@@ -444,13 +522,17 @@ function checkWordleRow() {
             tile.classList.add('flip');
             
             setTimeout(() => {
-                if (guess[i] === target[i]) {
-                    tile.classList.add('correct');
-                } else if (target.includes(guess[i])) {
-                    tile.classList.add('present');
+                let statusClass = '';
+                if (letter === target[i]) {
+                    statusClass = 'correct';
+                } else if (target.includes(letter)) {
+                    statusClass = 'present';
                 } else {
-                    tile.classList.add('absent');
+                    statusClass = 'absent';
                 }
+
+                tile.classList.add(statusClass);
+                updateKeyboardKey(letter, statusClass);
             }, 300);
         }, i * 100); 
     }
@@ -468,6 +550,19 @@ function checkWordleRow() {
             currentGuess = "";
         }
     }, animationDelay);
+}
+
+function updateKeyboardKey(letter, status) {
+    const keys = Array.from(document.querySelectorAll('.key'));
+    const targetKey = keys.find(k => k.innerText === letter);
+
+    if (!targetKey) return;
+
+    if (targetKey.classList.contains('correct')) return; 
+    if (targetKey.classList.contains('present') && status === 'absent') return;
+
+    targetKey.classList.remove('present', 'absent');
+    targetKey.classList.add(status);
 }
 
 function finishWordle(isCorrect) {
