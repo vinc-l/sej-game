@@ -188,7 +188,7 @@ section{
     justify-content: center;
     align-items: center;
 
-    height: 100dvh;
+    height: 100svh;
     width: 100%;
 }
 
@@ -201,7 +201,7 @@ section{
     
     width: 100%;
     max-width: 520px;
-    min-height: 100dvh; 
+    min-height: 100svh; 
 
     position: relative;
     overflow: hidden;
@@ -223,7 +223,7 @@ section{
 
 .bottom-container {
     position: relative;
-    z-index: 11;
+    z-index: 21;
     width: 100%;
     margin-top: auto;
 }
@@ -445,14 +445,14 @@ section{
     display: flex;
     align-items: flex-start;
     padding-top: 1.5em;
-    z-index: 5;
+    z-index: 20;
 }
 
 .feedback-bar.show {
     bottom: 0;
 }
 
-.feedback-bar.correct-bg { background-color: #9ad4b8; }
+.feedback-bar.correct-bg { background-color: #9be79b; }
 .feedback-bar.wrong-bg { background-color: #eb8c8c; }
 
 .feedback-content {
