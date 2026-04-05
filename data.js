@@ -323,14 +323,14 @@ export const quizData = [
         type: "Isian",
         difficulty: "Mid",
         question: "Berdasarkan gambar tersebut, nomor berapakah letak Samudra Pasai?",
-        image: "img/Map SP.jpg",
+        image: "/img/Map SP.jpg",
         answer: ["3"]
     },
     {
         type: "TF",
         difficulty: "HARD",
         question: "Berikut adalah gambar dari batu nisan Sultan Malik Al-Saleh",
-        image: "img/batu nisan sultan malik al-saleh.jpg",
+        image: "/img/batu nisan sultan malik al-saleh.jpg",
         answer: "Benar"
     },
     {
