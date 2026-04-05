@@ -343,6 +343,80 @@ section{
     100% { transform: rotateX(0); }
 }
 
+.keyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    margin-top: 1.5em;
+    user-select: none;
+}
+
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    touch-action: manipulation;
+}
+
+.key {
+    background-color: var(--light-gray);
+    color: #333;
+    border: none;
+    border-radius: 4px;
+    padding: 0;
+    height: 50px;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 1.1em;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.key.correct {
+    background-color: var(--light-green) !important;
+    border-color: var(--green);
+    color: white;
+}
+
+.key.present {
+    background-color: var(--light-yellow) !important;
+    border-color: var(--yellow);
+    color: white;
+}
+
+.key.absent {
+    background-color: var(--gray) !important;
+    border-color: #777;
+    color: white;
+    opacity: 0.6;
+}
+
+.key.wide {
+    background-color: var(--light-gray);
+    color: #333;
+    opacity: 1;
+}
+
+.key:active {
+    background-color: var(--gray);
+    transform: scale(0.95);
+}
+
+@media (max-width: 400px) {
+    .tile {
+        width: 45px;
+        height: 45px;
+    }
+    .key {
+        height: 45px;
+        font-size: 1em;
+    }
+}
+
 /* TRUE FALSE */
 #choicesContainer {
     width: 100%;
