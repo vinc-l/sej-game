@@ -508,39 +508,48 @@ function checkWordleRow() {
     const target = currentQuestion.answer[0].toUpperCase();
     const guess = currentGuess;
     const wordLength = target.length;
-    let correctCount = 0;
+    
+    const targetLetterCount = {};
+    for (let char of target) {
+        targetLetterCount[char] = (targetLetterCount[char] || 0) + 1;
+    }
+
+    const statuses = new Array(wordLength).fill('absent');
+    const guessArray = guess.split('');
+
+    for (let i = 0; i < wordLength; i++) {
+        if (guessArray[i] === target[i]) {
+            statuses[i] = 'correct';
+            targetLetterCount[guessArray[i]]--;
+        }
+    }
+
+    for (let i = 0; i < wordLength; i++) {
+        if (statuses[i] !== 'correct' && target.includes(guessArray[i])) {
+            if (targetLetterCount[guessArray[i]] > 0) {
+                statuses[i] = 'present';
+                targetLetterCount[guessArray[i]]--;
+            }
+        }
+    }
 
     for (let i = 0; i < wordLength; i++) {
         const tile = document.getElementById(`tile-${i + (wordleRowIndex * wordLength)}`);
-        const letter = guess[i];
-        
-        if (letter === target[i]) {
-            correctCount++;
-        }
+        const letter = guessArray[i];
+        const status = statuses[i];
 
         setTimeout(() => {
             tile.classList.add('flip');
-            
             setTimeout(() => {
-                let statusClass = '';
-                if (letter === target[i]) {
-                    statusClass = 'correct';
-                } else if (target.includes(letter)) {
-                    statusClass = 'present';
-                } else {
-                    statusClass = 'absent';
-                }
-
-                tile.classList.add(statusClass);
-                updateKeyboardKey(letter, statusClass);
-            }, 300);
-        }, i * 100); 
+                tile.classList.add(status);
+                updateKeyboardKey(letter, status);
+            }, 250);
+        }, i * 150);
     }
 
-    const animationDelay = (wordLength * 100) + 400; 
-
+    const animationDelay = (wordLength * 150) + 500;
     setTimeout(() => {
-        if (correctCount === wordLength) {
+        if (guess === target) {
             finishWordle(true);
         } else if (wordleRowIndex === 5) {
             finishWordle(false);
